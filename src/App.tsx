@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 
 export default function App() {
-  const [metricValue, setMetricValue] = useState(75);
-  const [activeTab, setActiveTab] = useState('DOWNFORCE');
+  const [metricValue, setMetricValue] = useState(85);
+  const [activeTab, setActiveTab] = useState<'HIGH-DOWNFORCE' | 'VENTURI-FLOOR' | 'DRY-SUMP V12'>('HIGH-DOWNFORCE');
+
+  const dynamicCd = (0.245 + (metricValue / 100) * 0.04).toFixed(3);
+  const dynamicDownforce = Math.round(280 + (metricValue / 100) * 100);
 
   return (
     <div>
@@ -12,13 +15,13 @@ export default function App() {
           <a href="#top" className="edge-brand">
             Veloce Morphos
           </a>
-          <span className="edge-coords">TORINO · MONZA // 0.24 Cd TUNNEL</span>
+          <span className="edge-coords">TORINO · MONZA // FIA APP. J ART. 257</span>
         </div>
 
         <nav className="edge-nav-links" aria-label="Primary Navigation">
-          <a href="#details" onClick={() => setActiveTab('DOWNFORCE')}>DOWNFORCE</a>
-          <a href="#details" onClick={() => setActiveTab('VENTURI')}>VENTURI</a>
-          <a href="#details" onClick={() => setActiveTab('POWERTRAIN')}>POWERTRAIN</a>
+          <a href="#details" onClick={() => setActiveTab('HIGH-DOWNFORCE')}>DOWNFORCE</a>
+          <a href="#details" onClick={() => setActiveTab('VENTURI-FLOOR')}>VENTURI FLOOR</a>
+          <a href="#details" onClick={() => setActiveTab('DRY-SUMP V12')}>POWERTRAIN</a>
         </nav>
 
         <a href="#inquire" className="edge-action-btn">
@@ -26,7 +29,7 @@ export default function App() {
         </a>
       </header>
 
-      {/* FULL-BLEED ARCHITECTURAL HERO (ZERO ITALIC SLOP, ZERO PILL BARS) */}
+      {/* FULL-BLEED ARCHITECTURAL HERO */}
       <header id="top" className="hero-fullbleed">
         <img
           src="/references/sites/site-6-veloce.jpg"
@@ -37,23 +40,25 @@ export default function App() {
 
         <div className="hero-body">
           <div className="hero-copy-stack">
-            <span className="hero-small-label">TIPO 04 GT · CHASSIS 007</span>
+            <span className="hero-small-label">TIPO 04 GT · CHASSIS 007 · HOMOLOGATED</span>
             <h1 className="hero-title">
               TIPO 04 CARBON GT
               <span className="hero-subline">AERODYNAMICS SHAPED BY SPEED.</span>
             </h1>
-            <p className="hero-lead">Autoclaved dry carbon coachwork with active ground-effect venturi tunnels and 720hp dry-sump naturally aspirated V12.</p>
+            <p className="hero-lead">
+              Autoclaved Torayca T800 high-modulus prepreg carbon composite coachwork with active ground-effect Venturi tunnels and 720hp naturally aspirated dry-sump V12.
+            </p>
             <a href="#details" className="editorial-cta-btn">
               Explore Specification
             </a>
           </div>
 
-          <div className="hero-quiet-caption" aria-label="Engineering Readouts">
-            <span>1,080kg DRY</span>
+          <div className="hero-quiet-caption" aria-label="Motorsport Telemetry Readouts">
+            <span>0.285 CD HIGH-DOWNFORCE</span>
             <span>·</span>
-            <span>720HP AT 9,200RPM</span>
+            <span>380 KG @ 250 KM/H</span>
             <span>·</span>
-            <span>680KG DOWNFORCE</span>
+            <span>TORAYCA T800 CARBON</span>
           </div>
         </div>
       </header>
@@ -62,19 +67,19 @@ export default function App() {
       <section id="details" className="lab-section">
         <div className="lab-grid">
           <div>
-            <span className="hero-small-label">ENGINEERING BENCH // ACTIVE MODE</span>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', textTransform: 'uppercase', marginBottom: '1rem' }}>
-              Precision Telemetry & Output
+            <span className="hero-small-label">AERODYNAMIC TELEMETRY // WIND-TUNNEL VALIDATION</span>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', textTransform: 'uppercase', marginBottom: '1rem', color: 'var(--ink-primary)' }}>
+              Precision Motorsport Telemetry
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, marginBottom: '2rem' }}>
-              Calibrated downforce and drag coefficients verified in wind-tunnel telemetry, molded in autoclave prepreg carbon.
+            <p style={{ color: 'var(--ink-muted)', lineHeight: 1.6, marginBottom: '2rem' }}>
+              Full-scale wind-tunnel telemetry measured at 250 km/h with active underbody Venturi strakes and autoclaved high-modulus prepreg composite tooling.
             </p>
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
-                <span>CALIBRATION ENVELOPE</span>
-                <span style={{ color: 'var(--accent-color)' }}>{metricValue}% NOMINAL</span>
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--ink-muted)' }}>DOWNFORCE ENVELOPE CALIBRATION</span>
+                <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>{metricValue}% VELOCITY TRIM</span>
+              </div>
               <input
                 type="range"
                 min="10"
@@ -82,6 +87,7 @@ export default function App() {
                 value={metricValue}
                 onChange={(e) => setMetricValue(Number(e.target.value))}
                 style={{ width: '100%', accentColor: 'var(--accent-color)', cursor: 'pointer' }}
+                aria-label="Downforce Envelope Calibration"
               />
             </div>
 
@@ -92,16 +98,20 @@ export default function App() {
                   <td className="spec-value">{activeTab}</td>
                 </tr>
                 <tr>
-                  <td className="spec-label">EFFICIENCY FACTOR</td>
-                  <td className="spec-value">{(0.91 + (metricValue / 1000)).toFixed(3)} η</td>
+                  <td className="spec-label">DRAG COEFFICIENT (Cd)</td>
+                  <td className="spec-value">0.285 in high-downforce trim <span style={{ fontSize: '0.75rem', color: 'var(--ink-muted)' }}>({dynamicCd} current)</span></td>
                 </tr>
                 <tr>
-                  <td className="spec-label">THERMAL DISSIPATION</td>
-                  <td className="spec-value">{(24 + (metricValue * 0.4)).toFixed(1)} °C</td>
+                  <td className="spec-label">NET AERO DOWNFORCE</td>
+                  <td className="spec-value">380 kg @ 250 km/h (front/rear balance 44/56)</td>
                 </tr>
                 <tr>
-                  <td className="spec-label">STATUS PROTOCOL</td>
-                  <td className="spec-value" style={{ color: 'var(--accent-color)' }}>VERIFIED · ZERO TOLERANCE</td>
+                  <td className="spec-label">MONOCOQUE MATERIAL</td>
+                  <td className="spec-value">Torayca T800 high-modulus prepreg carbon composite</td>
+                </tr>
+                <tr>
+                  <td className="spec-label">HOMOLOGATION</td>
+                  <td className="spec-value" style={{ color: 'var(--accent-color)' }}>FIA Appendix J Article 257 compliant</td>
                 </tr>
               </tbody>
             </table>
@@ -109,20 +119,24 @@ export default function App() {
 
           <div className="lab-display-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-soft)', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent-color)' }}>DIAGNOSTIC VISUALIZER</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>STAGE: {metricValue} / 100</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--accent-color)', fontWeight: 600 }}>
+                UNDERBODY VENTURI PRESSURE MAP
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--ink-muted)' }}>
+                DYNAMIC LOAD: {dynamicDownforce} KG
+              </span>
             </div>
 
-            <div style={{ height: '240px', display: 'flex', alignItems: 'flex-end', gap: '8px', background: 'rgba(0,0,0,0.5)', padding: '1rem', border: '1px solid var(--border-soft)' }}>
+            <div style={{ height: '240px', display: 'flex', alignItems: 'flex-end', gap: '8px', background: '#ffffff', padding: '1rem', border: '1px solid var(--border-soft)' }}>
               {[30, 45, 60, 40, 75, 90, 85, 95, 70, 80, 65, 88].map((base, idx) => {
-                const height = Math.min(100, Math.round((base * metricValue) / 75));
+                const height = Math.min(100, Math.round((base * metricValue) / 85));
                 return (
                   <div
                     key={idx}
                     style={{
                       flex: 1,
                       height: `${height}%`,
-                      background: idx % 2 === 0 ? 'var(--accent-color)' : 'rgba(255,255,255,0.4)',
+                      background: idx % 2 === 0 ? 'var(--accent-color)' : 'rgba(15, 17, 21, 0.25)',
                       transition: 'height 0.2s ease'
                     }}
                   />
@@ -130,9 +144,9 @@ export default function App() {
               })}
             </div>
 
-            <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)' }}>
-              <span>HARMONIC HARVEST</span>
-              <span style={{ color: 'var(--accent-color)' }}>DELTA-V PASSING</span>
+            <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--ink-muted)' }}>
+              <span>SUCTION VENTURI DIFFUSER</span>
+              <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>LAMINAR BOUNDARY ATTACHED</span>
             </div>
           </div>
         </div>
@@ -140,11 +154,11 @@ export default function App() {
 
       {/* FOOTER */}
       <footer id="inquire" style={{ borderTop: '1px solid var(--border-soft)', padding: '3.5rem', textAlign: 'center', background: 'var(--surface-color)' }}>
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', textTransform: 'uppercase', marginBottom: '1rem', color: 'var(--ink-primary)' }}>
           Veloce Morphos
         </p>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>
-          TORINO · MONZA // 0.24 Cd TUNNEL · COMMISSIONS &amp; SPECIFICATIONS OPEN FOR 2026
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--ink-muted)', letterSpacing: '0.1em' }}>
+          TORINO · MONZA // FIA APPENDIX J ARTICLE 257 · ALLOCATIONS OPEN FOR 2026
         </p>
       </footer>
     </div>
